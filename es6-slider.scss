@@ -1,0 +1,215 @@
+/*
+  SASS = Syntactically Awesome StyleS Sheets
+  Valid CSS = SASS
+  SASS != CSS (SASS needs to be compiled to CSS via SASS Compiler)
+  http://sass-lang.com/
+*/
+
+@import url('https://fonts.googleapis.com/css?family=Racing+Sans+One|Roboto');
+@function randomVal() {
+  @return random(256) - 1;
+}
+
+
+/*
+  SASS function directive
+  randomVal() returns a random number between 0 and 255 (for individual
+  RGB values)
+
+  define a function:
+    @function functionName($arg){
+      @return something;
+    }
+
+  call a function:
+    functionName($arg);
+
+  SASS built in random function random($limit); returns number between 1
+  and $limit
+
+  http://sass-lang.com/documentation/file.SASS_REFERENCE.html#function_directives
+  https://www.sitepoint.com/sass-basics-function-directive/
+*/
+
+@mixin randomRGBA() {
+  background-color: rgba(randomVal(), randomVal(), randomVal(), .25);
+}
+
+
+/*
+  SASS mixin directive
+  creates a random background-color with 25% opacity using rgba
+  rgba(Red,Green,Blue, Opacity);
+
+  define a mixin: @mixin mixinName($arg) {...};
+  call a mixin:  @include mixinName($arg);
+
+  http://sass-lang.com/documentation/file.SASS_REFERENCE.html#mixins
+  https://www.sitepoint.com/sass-basics-the-mixin-directive/
+*/
+
+body {
+  height: 100%;
+}
+
+.flex-reverse {
+  @media (min-width: 768px) {
+    flex-direction: row-reverse !important;
+  }
+  /*
+    Nested media query
+    SASS allows for nesting of selectors and media queries.
+
+    div {
+      p {
+        color: red;
+      }
+    }
+
+    compiles to: div p { color: red; }
+
+    Nested mixin compiles to:
+
+      @media (min-width: 768px) {
+        flex-reverse {
+          flex-direction: row-reverse !important;
+        }
+      }
+  */
+}
+
+.slide {
+  display: flex;
+  flex-wrap: nowrap;
+  flex-direction: column;
+  position: absolute;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  right: 0;
+  opacity: 0;
+  z-index: 1;
+  transition: opacity 1s;
+  @media (min-width: 768px) {
+    flex-direction: row;
+    flex-wrap: wrap;
+  }
+  &.visible {
+    opacity: 1;
+    z-index: 2;
+  }
+  /*
+    & operator combines selectors
+    compiles to: .slide.visible
+  */
+}
+
+$slides: 6;
+@while $slides>=0 {
+  .slide[data-slide="slide-#{$slides}"] {
+    @include randomRGBA();
+  }
+  $slides: $slides - 1;
+}
+
+
+/*
+  SASS looping function -- while loop
+  http://sass-lang.com/documentation/file.SASS_REFERENCE.html#control_directives__expressions
+
+  Interpolation to assign a number to the data-attribute
+  Interpolation allows for a variable to be evaluated in a string
+
+  Without interpolation
+    .slide[data-slide="slide-$slides"]
+
+    compiles to:
+
+    .slide[data-slide="slide-$slides"]
+
+  With interpolation
+  .slide[data-slide="slide-#{$slides}"]
+
+  compiles to:
+
+  .slide[data-slide="slide-1"]{}
+  .slide[data-slide="slide-2"]{}
+  .slide[data-slide="slide-3"]{}
+  .slide[data-slide="slide-4"]{}
+  .slide[data-slide="slide-5"]{}
+  .slide[data-slide="slide-6"]{}
+
+  http://sass-lang.com/documentation/file.SASS_REFERENCE.html#interpolation_
+  https://webdesign.tutsplus.com/tutorials/all-you-ever-need-to-know-about-sass-interpolation--cms-21375
+*/
+
+.slide-image {
+  flex: 0 1 50%;
+  img {
+    width: 100%;
+    height: 75vh;
+    /* vh = viewport height = 1% height of the viewports height */
+    object-fit: cover;
+    /*
+      object fit specifies how images & videos & other media responds to
+      the height and width of it's container.
+
+      https://css-tricks.com/almanac/properties/o/object-fit/
+      example: https://codepen.io/robinrendle/pen/BywNVX/
+    */
+    @media (min-width: 768px) {
+      height: 100vh;
+    }
+  }
+}
+
+.slide-caption {
+  flex: 0 1 50%;
+  display: flex;
+  background-color: inherit;
+}
+
+.slide-caption-content {
+  margin: auto;
+  width: 100%;
+  font-family: 'Roboto', sans-serif;
+  line-height: 1;
+  font-size: calc(14px + (19 - 14) * (100vw - 426px) / (768 - 426));
+  /*
+    Responsive font size using css calc() function
+    vw = viewport width = 1% height of the viewports width
+
+    calc(min-font-size + (max-font-size - min-font-size) * (100vw - min-viewport width) / (max-viewport-width - min-viewport-width))
+
+     https://www.smashingmagazine.com/2016/05/fluid-typography/
+  */
+  background-color: inherit;
+  padding: 0 .5em;
+  @media (min-width: 768px) {
+    width: 90%;
+    line-height: 1.5;
+    /* set font-size to stop from getting larger */
+    font-size: 1.25rem;
+  }
+  p {
+    padding: 0 1em;
+  }
+}
+
+.title-bg {
+  background-color: inherit;
+  padding: 0 .75em;
+  h1 {
+    font-family: 'Racing Sans One', serif;
+    font-size: calc(28px + (44 - 28) * (100vw - 426px) / (768 - 426));
+    font-weight: 700;
+    line-height: 1.2;
+    padding: 5px 0;
+    @media (max-width: 425px) {
+      margin: 0;
+    }
+    @media (min-width: 768px) {
+      font-size: 2.8125rem;
+    }
+  }
+}
